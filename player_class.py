@@ -30,7 +30,10 @@ class Joueur:
                         validite_mouvement==True
         if self.type_joueur=="MinMax":
             arbre=Tree()
-        
+        if self.type_joueur=="AlphaBeta":
+            pass
+        if self.type_joueur=="MCTS":
+            pass 
         return x,y            
                         
      
