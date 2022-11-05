@@ -1,6 +1,7 @@
 import timeit
 import numpy as np  
 from treelib import Tree,Node
+
 mat_poids=np.array([[120,-20,20,5,5,20,-20,120],
             [-20,-40,-5,-5,-5,-5,-40,-20],
             [20,-5,15,3,3,15,-5,20],
