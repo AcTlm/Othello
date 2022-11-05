@@ -138,7 +138,6 @@ class Plateau:
                     y -= direction_y
                     if (x == x_depart and y == y_depart) or not self.est_sur_plateau(x,y):
                         break
-                    print(x,y)
                     pion_a_changer.append([x, y])
             x,y=x_depart,y_depart
         if len(pion_a_changer) == 0:
@@ -149,12 +148,16 @@ class Plateau:
             self.plateau[y_pion][x_pion]=joueur.couleur
     
     def victoire(self):
-        resultat_j1=np.where(self.plateau==1)
-        resultat_j2=np.where(self.plateau==2)
-        score_j1=len(resultat_j1[0])
-        score_j2=len(resultat_j2)
-        vainqueur=np.bincount(self.plateau).argmax()
-        return score_j1,score_j2,vainqueur
+        liste_score_joueur=[]
+        _,comptage=np.unique(self.plateau,return_counts=True)
+        for joueur,score in enumerate(comptage):
+            if len(comptage)==3:
+                if joueur != 0: #ne compte pas les cases vides
+                    liste_score_joueur.append((joueur,score))
+            else:
+                liste_score_joueur.append((joueur,score))
+        vainqueur=max(liste_score_joueur,key=lambda x:x[1]) #selectionne le tuple qui le second élément (ici le score) le plus important     
+        return liste_score_joueur[0][1],liste_score_joueur[1][1],vainqueur[0]+1
 
 
         

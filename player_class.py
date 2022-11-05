@@ -22,7 +22,6 @@ class Joueur:
                 print("veuillez entrer xy l'endroit où vous voulez mettre le pion (par exemple 53 pour mettre un pion en (5,3))")
                 entree=input()
                 if len(entree) == 2 and entree.isnumeric():
-                    print("ici")
                     x=int(entree[0])
                     y=int(entree[1])
                     if (x,y) not in plateau.liste_coup_valide(self) :
