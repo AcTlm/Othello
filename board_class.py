@@ -80,7 +80,7 @@ class Plateau:
         liste_position_cardinales=[[0,-1],[1,0],[0,1],[-1,0]]
         if self.plateau[y][x] in [1,2]: #si la case est déjà occupée le coup est invalide d'office
             return False
-        for direction_x,direction_y in liste_position_cardinales:
+        for direction_x,direction_y in self.liste_directions:
             if self.est_sur_plateau(x+direction_x,y+direction_y):
                 if self.plateau[y+direction_y][x+direction_x]!=joueur.couleur and self.plateau[y+direction_y][x+direction_x]!=0:
                     if self.coup_retourne_un_pion(joueur,x,y):
