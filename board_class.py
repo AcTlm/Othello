@@ -141,12 +141,14 @@ class Plateau:
                     pion_a_changer.append([x, y])
             x,y=x_depart,y_depart
         if len(pion_a_changer) == 0:
-            print("choix non valide, car ne retourne aucun pion")
+            #print("choix non valide, car ne retourne aucun pion")
             return False
         for pion in pion_a_changer:
             x_pion,y_pion=pion
             self.plateau[y_pion][x_pion]=joueur.couleur
-    
+    def retirer_pion(self,x,y)->None:
+        self.plateau[y][x]=0
+        
     def victoire(self):
         liste_score_joueur=[]
         _,comptage=np.unique(self.plateau,return_counts=True)
