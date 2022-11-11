@@ -116,6 +116,7 @@ class Plateau:
         return point
 
     def placer_pion(self,joueur:player_class.Joueur,x:int,y:int)->None:
+        #à refaire
         self.plateau[y][x]=joueur.couleur
         pion_a_changer=[]
         x_depart,y_depart=x,y

@@ -22,7 +22,7 @@ class Joueur:
 
         
 
-    def get_move(self,plateau,adversaire):
+    def get_move(self,plateau,adversaire):        
         if self.type_joueur=="Humain":
             validite_coup=False
             while validite_coup==False:
@@ -38,20 +38,21 @@ class Joueur:
                         break
         if self.type_joueur=="MinMax":
             vraie_profondeur=min(self.profondeur,64-len(plateau)-1)
-            resultat=minmax(plateau,vraie_profondeur,self,adversaire)
-            choix=[resultat[0][0],resultat[0][1],resultat[-1]]
-            x,y,prof=choix
+            resultat=minmax(plateau,vraie_profondeur,self,adversaire)[0]
+            if resultat != None:
+                x,y=resultat
+            else: #règle le cas de bord du dernier coup
+                x,y=random.choice(plateau.liste_coup_valide(self))
         if self.type_joueur=="AlphaBeta":
             pass
         if self.type_joueur=="MCTS":
             pass
         if self.type_joueur=="Aléatoire":
-            prof="random"
             coups=plateau.liste_coup_valide(self)
             if len(coups) == 0:
                 return False
             x,y = coups[random.randint(0,len(coups) - 1)]
-        return x,y,prof
+        return x,y
                         
      
 infini=100000 #horreur je sais         
@@ -79,7 +80,7 @@ def minmax(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur)
     """if 'meilleur_coup' not in locals() and 'meilleur_coup' not in globals():
         meilleur_coup=False"""
         #raise ValueError("GROOOOOOOOOOOS")
-    return [meilleur_coup,maxEval,profondeur]
+    return [meilleur_coup,maxEval]
 
 """def minmax(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur):
     print(f"minmax({'taille du plateau ' + str(len(plateau_actuel))},{'profondeur = '+str(profondeur)},{joueur_actuel},{adversaire})")
