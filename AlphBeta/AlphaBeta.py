@@ -10,7 +10,7 @@ def alphabeta(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joue
         plateau_copy.placer_pion(joueur_actuel,coup[0],coup[1])
         #print(plateau_copy)
         #print("profondeur =",profondeur,"len = ",len(plateau_copy))
-        evaluation=minmax(plateau_copy,profondeur-1,adversaire,joueur_actuel,alpha,beta)[1]
+        evaluation=alphabeta(plateau_copy,profondeur-1,adversaire,joueur_actuel,alpha,beta)[1]
         #print(evaluation)
 
         plateau_copy.retirer_pion(coup[0],coup[1])
