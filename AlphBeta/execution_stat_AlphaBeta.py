@@ -5,10 +5,12 @@ import csv
 import tracemalloc
 import gc
 
-j1=Joueur("AlphaBeta",1,2) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
-j2=Joueur("Aléatoire",2,2)
+
+depth = 1
+j1=Joueur("Aléatoire",1,depth) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
+j2=Joueur("AlphaBeta",2,depth)
 print("Bienvenue à Othello le jeu trop rigolo (version statistiques avancées)")
-nombre_repetitions = 1
+nombre_repetitions = 2
 
 description_joueur_1=j1.type_joueur if j1.type_joueur in ["Aléatoire"] else f"{j1.type_joueur}_{j1.profondeur}"
 description_joueur_2=j2.type_joueur if j2.type_joueur in ["Aléatoire"] else f"{j2.type_joueur}_{j2.profondeur}"
