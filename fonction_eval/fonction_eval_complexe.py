@@ -167,4 +167,4 @@ def fonction_eval(self, board, moves, player):
                    0.15 * self.choice_diff(board) + \
                    0.7 * self.corner_diff(board)
 
-''' 
+''' '''
