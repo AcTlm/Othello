@@ -1,0 +1,25 @@
+from board_class import Plateau
+from player_class import Joueur
+from MCTS_Noeud_class import MCTS_Noeud
+from MCTSAgent_class import MCTSAgent 
+import random
+import numpy as np
+import time
+
+
+plat=Plateau()
+j1=Joueur("Aléatoire", 1) #initialise deux joueurs aléatoires j1 et j2 respectivement noirs et blancs
+j2=Joueur("Aléatoire", 2)
+# print("Bienvenue à Othello: partie MCTS et UCB")
+# Creation du plateau pour lequel on veut obtenir le meilleur coup de J1
+# plat.placer_pion(j1,4,2)
+# plat.placer_pion(j2,3,2)
+# print("le noeud racine (plateau) sur lequel on lance MCTS est le suivant:")
+# print(plat)
+# start = time.time()
+MCTS_A=MCTSAgent(100)
+#créé un agent qui va lance le nombre indiqué de rollouts de MCTS 
+MCTS_A.Select_un_coup(plat=plat, Joueur_=j1, Autre_Joueur=j2)
+#retourne le meilleur coup pour J1 à partir du plateau sélectionné, en ayant appliqué MCTS et UCB
+# print(time.time()-start)
+
