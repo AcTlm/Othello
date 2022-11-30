@@ -1,10 +1,10 @@
-from treelib import Tree,Node
 import board_class
 import random
 from copy import deepcopy
 import copy
 import numpy as np
 import math
+import sys
 class Joueur:
     liste_id_joueurs=[1,2]
     #rappel 1 <=> Noir, 2 <=> Blanc
@@ -46,10 +46,16 @@ class Joueur:
             else: #règle le cas de bord du dernier coup
                 x,y=random.choice(plateau.liste_coup_valide(self))
         if self.type_joueur=="AlphaBeta":
-            pass
+            vraie_profondeur = min(self.profondeur,64-len(plateau)-1)
+            resultat = alphabeta(plateau,vraie_profondeur,self,adversaire,-10000,10000)[0]
+            if resultat != None:
+                x,y=resultat
+            else: #règle le cas de bord du dernier coup
+                x,y=random.choice(plateau.liste_coup_valide(self))
         if self.type_joueur=="MCTS":
             MCTS_A=MCTSAgent(self.profondeur,joueur=self,adversaire=adversaire)
-            x,y=MCTS_A.Select_un_coup(plat=plateau)
+            coord,plateau=MCTS_A.Select_un_coup(plateau=plateau)
+            x,y=coord
 
         if self.type_joueur=="Aléatoire":
             coups=plateau.liste_coup_valide(self)
@@ -86,6 +92,26 @@ def minmax(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur)
         #raise ValueError("GROOOOOOOOOOOS")
     return [meilleur_coup,maxEval]
 
+def alphabeta(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur,alpha,beta):
+    liste_coup=plateau_actuel.liste_coup_valide(joueur_actuel)
+    meilleur_coup=[None,None]
+    if profondeur==0 or plateau_actuel.fin_de_partie(joueur_actuel,adversaire):
+            return [None,plateau_actuel.fonction_eval_numpy(joueur_actuel)]
+            
+    maxEval=-infini
+    for coup in plateau_actuel.liste_coup_valide(joueur_actuel):
+        plateau_copy=deepcopy(plateau_actuel)
+        plateau_copy.placer_pion(joueur_actuel,coup[0],coup[1])
+        evaluation=alphabeta(plateau_copy,profondeur-1,adversaire,joueur_actuel,alpha,beta)[1]
+
+        plateau_copy.retirer_pion(coup[0],coup[1])
+        maxEval = max(evaluation, maxEval)
+        alpha = max(evaluation, alpha)
+        if beta <= alpha:
+            break
+        meilleur_coup=coup
+           
+    return [meilleur_coup,maxEval]
 
 def uct_score(parent_rollouts, enfant_rollouts, victoire_pct):
 # fonction qui calcule score uct pour un noeud: tient compte de la performance associée à ce noeud(% de victoires d'un joueur) et de son facteur d'exploration (ici C est racine de 2)
@@ -180,6 +206,7 @@ class MCTS_Noeud:
                 if (L==[] and plat.liste_coup_valide(Joueur_)==[]):
                     victoire_=self.plat.victoire()
                     # print(victoire_)
+                    self.plat=plat_origin
                     return victoire_
                 elif L==[]:
                     # print("2 ne peut jouer, passe à 1")
@@ -195,12 +222,14 @@ class MCTS_Noeud:
                 if plat.fin_de_partie(Joueur_, Autre_Joueur)==True:
                         victoire_=self.plat.victoire()
                         # print(victoire_)
+                        self.plat=plat_origin
                         return victoire_
             elif tour==1:
                 L=plat.liste_coup_valide(Joueur_)
                 if (L==[] and (plat.liste_coup_valide(Autre_Joueur)==[])):
                     victoire_=self.plat.victoire()
                     # print(victoire_)
+                    self.plat=plat_origin
                     return victoire_
                 elif L==[]:
                     # print("1 ne peut jouer, passe à 2")
@@ -216,13 +245,16 @@ class MCTS_Noeud:
                 if plat.fin_de_partie(Joueur_, Autre_Joueur)==True:
                         victoire_=self.plat.victoire()
                         # print(victoire_)
+                        self.plat=plat_origin
                         return victoire_
         self.plat=plat_origin
+        print("bidule")
         #print("voici le plateau d'origine")
         #print(self.plat)
         if plat.fin_de_partie(Joueur_, Autre_Joueur)==True:
                 victoire_=self.plat.victoire()
                 # print(victoire_)
+                self.plat=plat_origin
                 return victoire_
         self.plat=plat_origin
         #print("voici le plateau d'origine")
@@ -262,11 +294,11 @@ class MCTSAgent:
         print(profondeur*"\t", "-issu du coup:", noeud.coup, "/", "nb de rollouts:", (noeud.nombre_rollouts["roll-out"]), "/", "% gagnant Joueur_:", noeud.pourcentage_de_victoires(self.Joueur_)*100, "% gagnant Autre_Joueur:", noeud.pourcentag_de_victoires(self.Autre_Joueur)*100)
     
 
-    def Select_un_coup (self, plat):
-        plat_copy=deepcopy(plat)
+    def Select_un_coup (self, plateau):
+        plat_copy=deepcopy(plateau)
         """Action de l'agent MCTS à partir d'un noeud racine: retourne le meilleur coup à jouer pour j1 en applicant MCTS rollouts et selection par UCB """
 
-        racine=MCTS_Noeud(plat=plat, parent=MCTS_Noeud, coup=[], Joueur_=self.Joueur_, Autre_Joueur=self.Autre_Joueur)
+        racine=MCTS_Noeud(plat=plat_copy, parent=MCTS_Noeud, coup=[], Joueur_=self.Joueur_, Autre_Joueur=self.Autre_Joueur)
         # plat_first=racine.plat
         noeud=racine
         while (noeud.ajout_enfant_possible()):
@@ -300,8 +332,10 @@ class MCTSAgent:
                 nouveau_noeud=self.select_un_enfant(noeud)
                 noeud=nouveau_noeud
                 k+=1
-                # print("noeud associé à k=", k,"\n") 
-                # print(noeud.plat)
+                if k>30:
+                    sys.exit()
+                print("noeud associé à k=", k,"\n") 
+                #print(noeud.plat)
                
             if (noeud.ajout_enfant_possible()):
                 if noeud.nombre_rollouts==0:
@@ -365,8 +399,8 @@ class MCTSAgent:
             if (e.pourcentage_de_victoires(self.Joueur_)) > (maxi.pourcentage_de_victoires(self.Joueur_)):
                 maxi=e
         # print("\n*****\nle meilleur coup à jouer est:", maxi.coup)
-        noeud=racine
-        return(maxi.coup)
+        plateau=plat_copy
+        return(maxi.coup,plateau)
 
         # print("\n*****\nresultat final:")
         # print("Racine:")

@@ -2,7 +2,7 @@ from board_class import Plateau
 from player_class import Joueur
 
 plat=Plateau()
-j1=Joueur("MCTS",1,10) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
+j1=Joueur("MCTS",1,5) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
 j2=Joueur("Aléatoire",2,3)
 compteur_tour=0
 print("Bienvenue à Othello le jeu trop rigolo")
