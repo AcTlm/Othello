@@ -17,7 +17,7 @@ def uct_score(parent_rollouts, enfant_rollouts, victoire_pct):
     else:    
         exploration=math.sqrt(math.log(parent_rollouts)/enfant_rollouts)
         # return victoire_pct+(math.sqrt(2))*exploration
-        return victoire_pct+(5*exploration)
+        return victoire_pct+(math.sqrt(2)*exploration)
 
 class MCTSAgent:
 #creation de la classe Agent MCTS qui va appliquer MCTS et UCB sur un nombre défini de rounds 
@@ -39,11 +39,11 @@ class MCTSAgent:
 
     def Affiche_Arbre(self, noeud=MCTS_Noeud,profondeur=0):
     #affiche pour un noeud ses statistiques MTCS: nombre de rollouts et pourcentage de victoires de chaque joueur
-        print(profondeur*"\t",noeud, "issu du coup:", noeud.coup, "nb de rollouts:", (noeud.nombre_rollouts["roll-out"]), "pct gagnant Joueur_:", noeud.pourcentage_de_victoires(Joueur_)*100, "pct gagnant Autre_Joueur:", noeud.pourcentag_de_victoires(Autre_Joueur)*100)
+        print(profondeur*"\t", "-issu du coup:", noeud.coup, "/", "nb de rollouts:", (noeud.nombre_rollouts["roll-out"]), "/", "% gagnant Joueur_:", noeud.pourcentage_de_victoires(Joueur_)*100, "% gagnant Autre_Joueur:", noeud.pourcentag_de_victoires(Autre_Joueur)*100)
     
 
     def Select_un_coup (self, plat, Joueur_, Autre_Joueur):
-        """Action de l'agent MCTS à partir d'un noeud racine: application de MCTS et selection par UCB et affiche à la fin des rounds les statistiques pour chaque noeud (racine et les enfants) """
+        """Action de l'agent MCTS à partir d'un noeud racine: retourne le meilleur coup à jouer pour j1 en applicant MCTS rollouts et selection par UCB """
 
         racine=MCTS_Noeud(plat, parent=MCTS_Noeud, coup=[], Joueur_=Joueur_, Autre_Joueur=Autre_Joueur)
         # plat_first=racine.plat
@@ -138,12 +138,20 @@ class MCTSAgent:
                     #         for g in f.enfants:
                     #             print("arriere-petit enfant")
                     #             self.Affiche_Arbre(noeud=g)
-        print("*****\n\nresultat final:")
-        self.Affiche_Arbre(noeud=racine)
-        print("Racine:")
+        
+        maxi=racine.enfants[0]
         for e in (racine.enfants):
-            print("\tenfant")
-            self.Affiche_Arbre(noeud=e)
+            if (e.pourcentage_de_victoires(Joueur_)) > (maxi.pourcentage_de_victoires(Joueur_)):
+                maxi=e
+        # print("\n*****\nle meilleur coup à jouer est:", maxi.coup)
+        return(maxi.coup)
+
+        # print("\n*****\nresultat final:")
+        # print("Racine:")
+        # self.Affiche_Arbre(noeud=racine)
+        # print("\tEnfants:")
+        # for e in (racine.enfants):
+            # self.Affiche_Arbre(noeud=e)     
             # for f in e.enfants:
             #     print("\t\tpetit-enfant")
             #     self.Affiche_Arbre(noeud=f,profondeur=1)

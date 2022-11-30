@@ -2,8 +2,8 @@ from board_class import Plateau
 from player_class import Joueur
 
 plat=Plateau()
-j1=Joueur("Aléatoire",1,3) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
-j2=Joueur("MinMax",2,3)
+j1=Joueur("MCTS",1,5) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
+j2=Joueur("Aléatoire",2,3)
 compteur_tour=0
 print("Bienvenue à Othello le jeu trop rigolo")
 while not plat.fin_de_partie(j1,j2):
