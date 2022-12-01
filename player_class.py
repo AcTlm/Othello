@@ -72,7 +72,7 @@ def minmax(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur)
     liste_coup=plateau_actuel.liste_coup_valide(joueur_actuel)
     meilleur_coup=[None,None]
     if profondeur==0 or plateau_actuel.fin_de_partie(joueur_actuel,adversaire):
-            return [None,plateau_actuel.fonction_eval_numpy(joueur_actuel)]
+        return [None,plateau_actuel.fonction_eval_numpy(joueur_actuel)]
  
     maxEval=-infini
     #meilleur_coup=random.choice(plateau_actuel.liste_coup_valide(joueur_actuel))
@@ -81,15 +81,13 @@ def minmax(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur)
         plateau_copy.placer_pion(joueur_actuel,coup[0],coup[1])
         #print(plateau_copy)
         #print("profondeur =",profondeur,"len = ",len(plateau_copy))
-        evaluation=minmax(plateau_copy,profondeur-1,adversaire,joueur_actuel)[1]
-        #print(evaluation)
+        evaluation=minmax(plateau_copy,profondeur-1,adversaire,joueur_actuel)[1]        
         plateau_copy.retirer_pion(coup[0],coup[1])
         if evaluation>maxEval:
             maxEval=evaluation
             meilleur_coup=coup
     """if 'meilleur_coup' not in locals() and 'meilleur_coup' not in globals():
         meilleur_coup=False"""
-        #raise ValueError("GROOOOOOOOOOOS")
     return [meilleur_coup,maxEval]
 
 def alphabeta(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur,alpha,beta):

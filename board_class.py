@@ -18,7 +18,7 @@ class Plateau:
     liste_directions: list
         Liste de toutes les directions possibles autour d'une position
     dict_equivalence:
-        Pour l'affiche de l'othellier, prends un 0,1 ou 2 et renvoie respectivement un espace vide, N ou B
+        Pour l'affichage de l'othellier, prends un 0,1 ou 2 et renvoie respectivement un espace vide, N ou B
     
 
     Returns:
@@ -58,24 +58,24 @@ class Plateau:
 
         Renvoie:
             str: Un affichage simple de l'othellier, exemple pour le plateau initial :
-   0 1 2 3 4 5 6 7
-  +-+-+-+-+-+-+-+-+
- 0| | | | | | | | |
-  +-+-+-+-+-+-+-+-+
- 1| | | | | | | | |
-  +-+-+-+-+-+-+-+-+
- 2| | | | | | | | |
-  +-+-+-+-+-+-+-+-+
- 3| | | |N|B| | | |
-  +-+-+-+-+-+-+-+-+
- 4| | | |B|N| | | |
-  +-+-+-+-+-+-+-+-+
- 5| | | | | | | | |
-  +-+-+-+-+-+-+-+-+
- 6| | | | | | | | |
-  +-+-+-+-+-+-+-+-+
- 7| | | | | | | | |
-  +-+-+-+-+-+-+-+-+
+    0 1 2 3 4 5 6 7
+    +-+-+-+-+-+-+-+-+
+   0| | | | | | | | |
+    +-+-+-+-+-+-+-+-+
+   1| | | | | | | | |
+    +-+-+-+-+-+-+-+-+
+   2| | | | | | | | |
+    +-+-+-+-+-+-+-+-+
+   3| | | |N|B| | | |
+    +-+-+-+-+-+-+-+-+
+   4| | | |B|N| | | |
+    +-+-+-+-+-+-+-+-+
+   5| | | | | | | | |
+    +-+-+-+-+-+-+-+-+
+   6| | | | | | | | |
+    +-+-+-+-+-+-+-+-+
+   7| | | | | | | | |
+    +-+-+-+-+-+-+-+-+
         """   
                      
         ligne_horizontale='  +-+-+-+-+-+-+-+-+'
