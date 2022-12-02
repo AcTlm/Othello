@@ -3,8 +3,8 @@ from player_class import Joueur
 import time
 import csv
 
-j1=Joueur("AlphaBeta",1,3) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
-j2=Joueur("Aléatoire",2,3)
+j1=Joueur(type_joueur="Aléatoire",couleur_booleen=1) #initialise deux joueurs j1 et j2 respectivement noirs et blancs
+j2=Joueur(type_joueur="Aléatoire",couleur_booleen=2)
 print("Bienvenue à Othello le jeu trop rigolo (version statistiques avancées)")
 nombre_repetitions = 10
 description_joueur_1=j1.type_joueur if j1.type_joueur in ["Aléatoire"] else f"{j1.type_joueur}_{j1.profondeur}"
@@ -44,8 +44,8 @@ try:
         else:
             print(f"Avec un score final de {scores_finaux[0]} pour le joueur 1 et de {scores_finaux[1]} pour le joueur 2 le vainqueur est le joueur {scores_finaux[2]}")
         lignes.append([k,scores_finaux[0],scores_finaux[1],"egalité" if scores_finaux[0]==scores_finaux[1] else equivalence_joueur_description[scores_finaux[2]],time.time()-t1])
-except:
-    pass
+except Exception as e:
+    print(e)
 with open(f"{description_joueur_1}_vs_{description_joueur_2}_{nombre_repetitions}_repetitions.csv",'w',newline="") as f:
     write =csv.writer(f,delimiter=";")
     write.writerow(colonnes)

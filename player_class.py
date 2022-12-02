@@ -5,11 +5,32 @@ import copy
 import numpy as np
 import math
 import sys
+
+###############################################################################
+#Partie de la classe Joueur                                                   #
+###############################################################################
 class Joueur:
+    """Classe représentant un Joueur
+
+    Raises:
+        ValueError: Si le type de joueur ou la couleur choisie est non valable
+
+    """    
     liste_id_joueurs=[1,2]
     #rappel 1 <=> Noir, 2 <=> Blanc
     liste_type_joueur=["Humain","MinMax","AlphaBeta","MCTS","Aléatoire"]
+
     def __init__(self,type_joueur,couleur_booleen,profondeur=3) -> None:
+        """Initialise un joueur avec tous ses attributs
+
+        Args:
+            type_joueur (str): type de joueur, choisi parmi les éléments de liste_type_joueur
+            couleur_booleen (int): entier (1 ou 2) représentant la couleur des pions du joueur (respectivement noir et blanc)
+            profondeur (int, optional): Le cas échéant la profondeur de recherche de l'algorithme à appliquer. Vaut 3 par défaut.
+
+        Raises:
+            ValueError:  Si le type de joueur ou la couleur choisie est non valable
+        """        
         if couleur_booleen not in self.liste_id_joueurs:
             raise ValueError('Choisissez une valeur valable pour la couleur (1 pour noir,2 pour blanc)')
         elif type_joueur not in self.liste_type_joueur:
@@ -19,12 +40,22 @@ class Joueur:
             self.couleur=couleur_booleen
             self.profondeur=profondeur
     def __str__(self):
+        """Utiliser print sur un objet Joueur renvoie des informations sur le joueur et son type"""        
         return f"Joueur n°{self.couleur} de type {self.type_joueur} {'' if self.type_joueur=='Humain' else 'avec une profondeur de '+str(self.profondeur)}"
-    infini=100000 #horreur je sais
 
         
 
-    def get_move(self,plateau,adversaire):        
+    def get_move(self,plateau,adversaire):
+        """Selon le type de joueur que l'objet self est, renvoie le coup choisi par ce joueur,
+        soit en appliquant un algorithme soit
+
+        Args:
+            plateau (Plateau): le plateau dans son état actuel avant que le joueur ait à choisir son coup
+            adversaire (Joueur): L'objet Joueur contre lequel le joueur en question joue
+
+        Returns:
+            tuple: les coordonnées x et y du coup considéré par le joueur
+        """                
         if self.type_joueur=="Humain":
             validite_coup=False
             while validite_coup==False:
@@ -63,31 +94,43 @@ class Joueur:
                 return False
             x,y = coups[random.randint(0,len(coups) - 1)]
         return x,y
-                        
-     
-infini=100000 #horreur je sais         
+
+###############################################################################
+#Partie des fonctions MinMax et AlphaBeta                                     #
+###############################################################################                       
+
+infini=100000 #horreur je sais   
+      
 def minmax(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur):
-    #print(f"minmax({'taille du plateau ' + str(len(plateau_actuel))},{'profondeur = '+str(profondeur)},{joueur_actuel},{adversaire})")
-    #print(plateau_actuel)
-    liste_coup=plateau_actuel.liste_coup_valide(joueur_actuel)
+    """Permet d'obtenir par récursion le meilleur coup par l'algorithme MinMax
+    /!\ il y a une subtilité par rapport à un minmax classique, on 
+    ne cherche pas à maximiser le gain pour un joueur et le minimiser pour
+    un autre mais bien à maximiser le gain pour les deux, car la fonction 
+    d'évaluation dépend du joueur
+
+    Args:
+        plateau_actuel (Plateau): plateau avant le tour du joueur
+        profondeur (int): 
+        joueur_actuel (Joueur): le joueur qui veut jouer
+        adversaire (Joueur): son adversaire
+
+    Returns:
+        liste: liste contenant en premier indice le meilleur coup et en 
+        deuxieme indice l'évaluation trouvée pour le plateau avec ce meilleur coup
+    """    
     meilleur_coup=[None,None]
     if profondeur==0 or plateau_actuel.fin_de_partie(joueur_actuel,adversaire):
         return [None,plateau_actuel.fonction_eval_numpy(joueur_actuel)]
  
     maxEval=-infini
-    #meilleur_coup=random.choice(plateau_actuel.liste_coup_valide(joueur_actuel))
     for coup in plateau_actuel.liste_coup_valide(joueur_actuel):
         plateau_copy=deepcopy(plateau_actuel)
         plateau_copy.placer_pion(joueur_actuel,coup[0],coup[1])
-        #print(plateau_copy)
-        #print("profondeur =",profondeur,"len = ",len(plateau_copy))
-        evaluation=minmax(plateau_copy,profondeur-1,adversaire,joueur_actuel)[1]        
+        evaluation=minmax(plateau_copy,profondeur-1,adversaire,joueur_actuel)[1]#subtilité évoquée dans la docstring  
         plateau_copy.retirer_pion(coup[0],coup[1])
         if evaluation>maxEval:
             maxEval=evaluation
             meilleur_coup=coup
-    """if 'meilleur_coup' not in locals() and 'meilleur_coup' not in globals():
-        meilleur_coup=False"""
     return [meilleur_coup,maxEval]
 
 def alphabeta(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joueur,alpha,beta):
@@ -111,6 +154,9 @@ def alphabeta(plateau_actuel,profondeur:int,joueur_actuel:Joueur,adversaire:Joue
            
     return [meilleur_coup,maxEval]
 
+###############################################################################
+#Partie des fonctions et classes pour MCTS                                    #
+###############################################################################  
 def uct_score(parent_rollouts, enfant_rollouts, victoire_pct):
 # fonction qui calcule score uct pour un noeud: tient compte de la performance associée à ce noeud(% de victoires d'un joueur) et de son facteur d'exploration (ici C est racine de 2)
     if enfant_rollouts==0:
